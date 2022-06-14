@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebShop.Models;
+using WebShop.Models.ViewModels;
 
 namespace WebShop.Controllers
 {
@@ -15,10 +16,20 @@ namespace WebShop.Controllers
             repository = repo;
         }
 
-        public ViewResult List(int productPage = 1) 
-            => View(repository.Products
-                .OrderBy(p=>p.Id)
+        public ViewResult List(int productPage = 1)
+            => View(new ProductsListViewModel
+            {
+                Products = repository.Products
+                .OrderBy(p => p.Id)
                 .Skip((productPage - 1) * PageSize)
-                .Take(PageSize));
+                .Take(PageSize),
+                PagingInfo = new PagingInfo()
+                {
+                    CurrentPage = productPage,
+                    ItemsPerPage = PageSize,
+                    TotalItems = repository.Products.Count()
+                }
+            });
     }
 }
+
